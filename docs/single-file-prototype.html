@@ -1,0 +1,1340 @@
+<title>CryptoPulse Quiz Funnel</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Quiz funnel prototype for CryptoPulse, a concept for crypto market alerts in Telegram, with the strategy behind it.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Instrument+Sans:wght@400..700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  /* Layout: sticky top bar with a Prototype / Strategy switch. The prototype sits on monitor-grid paper; the landing turns into the quiz in place, and reviewer notes run in a blue-pen margin column on wide screens. The strategy is one reading column. */
+  --bg:#ECEFF3;
+  --surface:#FFFFFF;
+  --sunken:#E2E7ED;
+  --ink:#0D1626;
+  --muted:#566275;
+  --line:#CCD3DD;
+  --grid:rgba(13,22,38,.05);
+  --signal:#FFB020;
+  --signal-hover:#FFC24F;
+  --on-signal:#1F1400;
+  --signal-text:#8A5000;
+  --up:#0B7A45;
+  --down:#BF3329;
+  --pen:#2D46C2;
+  --pen-wash:rgba(45,70,194,.055);
+  --mark:#0D1626;
+  --cta-bg:#0D1626;
+  --cta-ink:#EEF2F7;
+  --cta-muted:#A9B4C4;
+  --chat-bg:#101B2C;
+  --chat-head:#16233A;
+  --chat-bubble:#1D2B44;
+  --chat-user:#3657D9;
+  --chat-user-ink:#FFFFFF;
+  --chat-ink:#E8EDF5;
+  --chat-muted:#90A0B8;
+  --chat-sys:rgba(232,237,245,.07);
+  --chat-btn:#26375A;
+  --chat-btn-hover:#30446D;
+  --chat-up:#4BD996;
+  --chat-down:#FF8277;
+  --shadow:0 1px 2px rgba(13,22,38,.05),0 12px 32px -14px rgba(13,22,38,.22);
+
+  --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --f-body:"Instrument Sans","Segoe UI",system-ui,-apple-system,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SF Mono",Consolas,monospace;
+
+  --t-xxs:.6875rem; --t-xs:.75rem; --t-sm:.875rem; --t-base:1rem; --t-md:1.125rem; --t-lg:1.375rem; --t-xl:1.875rem;
+  --gutter:max(clamp(16px,4vw,32px),env(safe-area-inset-left,0px));
+  --gutter-r:max(clamp(16px,4vw,32px),env(safe-area-inset-right,0px));
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0A0F18; --surface:#111927; --sunken:#0D1420; --ink:#E5EAF1; --muted:#95A2B6; --line:#243149; --grid:rgba(229,234,241,.04);
+    --signal:#FFB833; --signal-hover:#FFC85E; --on-signal:#1F1400; --signal-text:#FFC566;
+    --up:#3FD08C; --down:#FF7366; --pen:#97A8FF; --pen-wash:rgba(151,168,255,.07);
+    --mark:#1B2840; --cta-bg:#172235; --cta-ink:#EEF2F7; --cta-muted:#A3AFC2;
+    --chat-bg:#0C1320; --chat-head:#111B2C; --chat-bubble:#18243A; --chat-user:#3A5BD8; --chat-user-ink:#FFFFFF; --chat-ink:#E8EDF5; --chat-muted:#8E9CB3; --chat-sys:rgba(232,237,245,.07);
+    --chat-btn:#21304D; --chat-btn-hover:#2B3D61; --chat-up:#4BD996; --chat-down:#FF8277;
+    --shadow:0 1px 2px rgba(0,0,0,.35),0 12px 32px -14px rgba(0,0,0,.6);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0A0F18; --surface:#111927; --sunken:#0D1420; --ink:#E5EAF1; --muted:#95A2B6; --line:#243149; --grid:rgba(229,234,241,.04);
+  --signal:#FFB833; --signal-hover:#FFC85E; --on-signal:#1F1400; --signal-text:#FFC566;
+  --up:#3FD08C; --down:#FF7366; --pen:#97A8FF; --pen-wash:rgba(151,168,255,.07);
+  --mark:#1B2840; --cta-bg:#172235; --cta-ink:#EEF2F7; --cta-muted:#A3AFC2;
+  --chat-bg:#0C1320; --chat-head:#111B2C; --chat-bubble:#18243A; --chat-user:#3A5BD8; --chat-user-ink:#FFFFFF; --chat-ink:#E8EDF5; --chat-muted:#8E9CB3; --chat-sys:rgba(232,237,245,.07);
+  --chat-btn:#21304D; --chat-btn-hover:#2B3D61; --chat-up:#4BD996; --chat-down:#FF8277;
+  --shadow:0 1px 2px rgba(0,0,0,.35),0 12px 32px -14px rgba(0,0,0,.6);
+  color-scheme:dark;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:var(--t-base);line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+main{flex:1;display:flex;flex-direction:column}
+.view{flex:1}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--surface)}
+h1,h2,h3,h4{margin:0;text-wrap:balance;line-height:1.15}
+p{margin:0}
+ul,ol{margin:0}
+button{font:inherit;color:inherit}
+code{font-family:var(--f-mono);font-size:.9em}
+:focus-visible{outline:2.5px solid var(--pen);outline-offset:2px;border-radius:6px}
+[tabindex="-1"]:focus{outline:none}
+.wrap{max-width:1240px;margin-inline:auto;padding-left:var(--gutter);padding-right:var(--gutter-r)}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.muted{color:var(--muted)}
+.eyebrow{font-family:var(--f-mono);font-size:var(--t-xs);letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.up{color:var(--up)} .down{color:var(--down)}
+.hyp{display:inline-block;font-family:var(--f-mono);font-size:var(--t-xxs);text-transform:uppercase;letter-spacing:.07em;color:var(--signal-text);border:1px solid currentColor;border-radius:99px;padding:0 7px;line-height:1.6;vertical-align:1px;margin-right:6px;white-space:nowrap}
+
+/* top bar */
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line)}
+.topbar-inner{display:flex;align-items:center;flex-wrap:wrap;gap:10px 18px;min-height:58px;padding-block:8px}
+.brand{display:flex;align-items:center;gap:9px;font-family:var(--f-display);font-stretch:112%;font-weight:800;font-size:1.0625rem;letter-spacing:-.01em}
+.brand-mark{width:28px;height:28px;flex:none}
+.brand-mark rect{fill:var(--mark)}
+.brand-mark polyline{stroke:var(--signal)}
+.badge{font-family:var(--f-mono);font-size:var(--t-xxs);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);border:1px solid var(--line);border-radius:99px;padding:3px 9px;white-space:nowrap}
+.bar-right{display:flex;align-items:center;gap:16px;margin-left:auto;flex-wrap:wrap}
+.views{display:flex;gap:2px;background:var(--sunken);border-radius:9px;padding:3px}
+.views button{border:0;background:transparent;padding:6px 14px;border-radius:7px;font-size:var(--t-sm);font-weight:600;color:var(--muted);cursor:pointer}
+.views button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(13,22,38,.12)}
+.notes-toggle{display:inline-flex;align-items:center;gap:8px;font-size:var(--t-sm);font-weight:600;color:var(--pen);cursor:pointer;user-select:none}
+.notes-toggle input{appearance:none;-webkit-appearance:none;width:34px;height:20px;border-radius:99px;background:var(--sunken);border:1.5px solid var(--pen);position:relative;cursor:pointer;margin:0;flex:none}
+.notes-toggle input::after{content:"";position:absolute;top:2px;left:2px;width:13px;height:13px;border-radius:50%;background:var(--pen);transition:transform .18s}
+.notes-toggle input:checked{background:var(--pen-wash)}
+.notes-toggle input:checked::after{transform:translateX(14px)}
+.notes-toggle[hidden]{display:none}
+.lbl-short{display:none}
+@media (max-width:560px){
+  .topbar{position:static}
+  .badge,.lbl-long{display:none}
+  .lbl-short{display:inline}
+  .bar-right{margin-left:0;width:100%;justify-content:space-between}
+}
+
+/* prototype canvas */
+.view-proto{background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:28px 28px;background-position:-1px -1px}
+.proto{display:grid;grid-template-columns:minmax(0,1fr);gap:28px;padding-block:32px 56px;align-items:start}
+@media (min-width:1100px){ body.notes-on .proto{grid-template-columns:minmax(0,1fr) 300px} }
+.stage{min-width:0;container-type:inline-size;scroll-margin-top:84px}
+.notes{min-width:0;display:grid;gap:12px}
+@media (min-width:1100px){ .notes{position:sticky;top:calc(env(safe-area-inset-top,0px) + 80px);max-height:calc(100vh - 100px);overflow:auto} }
+
+/* buttons */
+.btn-signal{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:var(--signal);color:var(--on-signal);border:0;border-radius:10px;padding:12px 18px;font-weight:650;font-size:var(--t-base);line-height:1.2;cursor:pointer;box-shadow:inset 0 -2px 0 rgba(0,0,0,.14);transition:background .15s,transform .1s}
+.btn-signal:hover{background:var(--signal-hover)}
+.btn-signal:active{transform:translateY(1px)}
+.btn-signal:disabled{opacity:.45;cursor:not-allowed}
+.btn-signal svg{width:18px;height:18px;flex:none}
+.btn-lg{padding:16px 22px;font-size:var(--t-md);border-radius:12px}
+.link-btn{background:none;border:0;padding:4px 0;color:var(--muted);font-size:var(--t-sm);font-weight:600;cursor:pointer}
+.link-btn:hover{color:var(--ink)}
+.chip-btn{background:var(--surface);border:1.5px solid var(--line);border-radius:99px;padding:6px 14px;font-size:var(--t-sm);font-weight:600;cursor:pointer}
+.chip-btn:hover{border-color:var(--ink)}
+
+/* landing */
+.landing{display:grid;grid-template-columns:minmax(0,1fr);gap:36px;padding-block:8px 12px}
+@container (min-width:760px){ .landing{grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:44px;align-items:center} }
+.hero-copy{display:grid;gap:22px;align-content:start}
+.display{font-family:var(--f-display);font-stretch:110%;font-weight:800;font-size:clamp(2.3rem,1rem + 4.4cqi,3.75rem);line-height:1;letter-spacing:-.03em}
+.display em{font-style:normal;background:linear-gradient(transparent 62%,color-mix(in srgb,var(--signal) 55%,transparent) 62%,color-mix(in srgb,var(--signal) 55%,transparent) 92%,transparent 92%)}
+.lede{font-size:var(--t-md);color:var(--muted);max-width:34em;line-height:1.5}
+.cta-row{display:flex;flex-wrap:wrap;align-items:center;gap:14px 18px}
+.cta-meta{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono);font-size:var(--t-xs);color:var(--muted)}
+.cta-meta svg{width:15px;height:15px}
+.assure{list-style:none;padding:0;display:flex;flex-wrap:wrap;gap:8px 18px;font-size:var(--t-sm);color:var(--ink)}
+.assure li{display:inline-flex;align-items:center;gap:7px}
+.assure svg{width:16px;height:16px;color:var(--up);flex:none}
+.hero-visual{display:grid;gap:12px;min-width:0}
+.vis-label{font-family:var(--f-mono);font-size:var(--t-xxs);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.vis-label--signal{display:flex;align-items:center;gap:8px;color:var(--signal-text)}
+.vis-label--signal::before{content:"";width:18px;height:1.5px;background:currentColor}
+.noise{display:grid;gap:7px;padding-block:12px;border-block:1px dashed var(--line)}
+.noise-row{overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent);mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent)}
+.noise-track{display:flex;width:max-content;animation:tick 52s linear infinite}
+.noise-row:nth-of-type(odd) .noise-track{animation-direction:reverse;animation-duration:64s}
+.tk{font-family:var(--f-mono);font-size:var(--t-xs);color:var(--muted);display:inline-flex;gap:6px;white-space:nowrap;padding-right:20px;font-variant-numeric:tabular-nums}
+.tk b{font-weight:500;color:var(--ink);opacity:.65}
+.tk .up,.tk .down{opacity:.75}
+@keyframes tick{to{transform:translateX(-50%)}}
+
+/* chat (shared by hero, preview, bot) */
+.chat{background:var(--chat-bg);color:var(--chat-ink);border-radius:18px;overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow);min-width:0}
+.chat-head{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--chat-head);border-bottom:1px solid var(--chat-sys)}
+.chat-head b{display:block;font-size:var(--t-sm);line-height:1.2}
+.chat-head span{font-size:var(--t-xs);color:var(--chat-muted)}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--signal);display:grid;place-items:center;flex:none}
+.avatar svg{width:20px;height:20px}
+.avatar polyline{stroke:var(--on-signal)}
+.chat-log{padding:14px;display:flex;flex-direction:column;gap:8px}
+.msg{max-width:88%;padding:9px 12px 7px;border-radius:14px;font-size:var(--t-sm);line-height:1.45;overflow-wrap:anywhere}
+.msg p{margin-top:6px}
+.msg.bot{align-self:flex-start;background:var(--chat-bubble);border-bottom-left-radius:4px}
+.msg.user{align-self:flex-end;background:var(--chat-user);color:var(--chat-user-ink);border-bottom-right-radius:4px}
+.msg.sys{align-self:center;max-width:96%;background:var(--chat-sys);color:var(--chat-muted);font-family:var(--f-mono);font-size:var(--t-xxs);border-radius:10px;padding:5px 12px;text-align:center}
+.msg-tag{display:block;font-family:var(--f-mono);font-size:var(--t-xxs);letter-spacing:.05em;text-transform:uppercase;color:var(--signal);margin-bottom:3px}
+.msg-meta{display:block;text-align:right;font-size:var(--t-xxs);color:var(--chat-muted);margin-top:3px}
+.msg .muted{color:var(--chat-muted)}
+.msg ul{padding-left:18px;margin-top:4px}
+.chat .up{color:var(--chat-up)} .chat .down{color:var(--chat-down)}
+.kb{align-self:flex-start;width:min(88%,340px);display:grid;grid-template-columns:repeat(auto-fit,minmax(84px,1fr));gap:4px;margin-top:-3px}
+.kb button{background:var(--chat-btn);color:var(--chat-ink);border:0;border-radius:8px;padding:9px 8px;font-size:var(--t-sm);font-weight:600;cursor:pointer;line-height:1.25}
+.kb button:hover{background:var(--chat-btn-hover)}
+.kb button.wide{grid-column:1 / -1}
+.kb button[aria-pressed="true"]{background:var(--chat-user);color:var(--chat-user-ink)}
+.dots{display:inline-flex;gap:4px;padding:4px 2px}
+.dots i{width:6px;height:6px;border-radius:50%;background:var(--chat-muted);animation:blink 1s infinite}
+.dots i:nth-child(2){animation-delay:.15s} .dots i:nth-child(3){animation-delay:.3s}
+@keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}
+
+/* quiz */
+.qcard{max-width:720px;margin-inline:auto;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:clamp(20px,4.5cqi,38px);box-shadow:var(--shadow);display:grid;gap:18px}
+.qtop{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.qcount{font-family:var(--f-mono);font-size:var(--t-xs);color:var(--muted);font-variant-numeric:tabular-nums}
+.progress{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:-6px}
+.progress span{height:4px;border-radius:2px;background:var(--sunken)}
+.progress span.done{background:var(--ink)}
+.progress span.now{background:var(--signal)}
+.qtitle{font-family:var(--f-display);font-stretch:106%;font-weight:750;font-size:clamp(1.5rem,1rem + 2cqi,2.05rem);letter-spacing:-.018em;line-height:1.1}
+.qhint{color:var(--muted);font-size:var(--t-sm);margin-top:-8px}
+.opts{display:grid;gap:10px}
+.opts--coins{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.opt{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;column-gap:14px;text-align:left;width:100%;padding:14px 16px;border:1.5px solid var(--line);border-radius:12px;background:var(--surface);cursor:pointer;transition:border-color .15s,background .15s}
+.opt:hover{border-color:var(--ink)}
+.opt[aria-pressed="true"]{border-color:var(--ink);background:var(--sunken)}
+.opt--wide{grid-column:1 / -1}
+.key{grid-row:1 / span 2;font-family:var(--f-mono);font-size:var(--t-xs);width:28px;height:28px;display:grid;place-items:center;border:1px solid var(--line);border-radius:7px;color:var(--muted);transition:background .15s}
+.opt[aria-pressed="true"] .key{background:var(--signal);border-color:var(--signal);color:var(--on-signal)}
+.opt-l{font-weight:550;line-height:1.35}
+.opt-l small{display:block;font-family:var(--f-mono);font-size:var(--t-xs);color:var(--muted);font-weight:400;margin-top:1px}
+.pts{font-family:var(--f-mono);font-size:var(--t-xxs);color:var(--pen);line-height:1.4;margin-top:3px}
+.qfoot{display:flex;align-items:center;flex-wrap:wrap;gap:14px}
+.qfoot .qhint{margin:0}
+body:not(.notes-on) .pts,body:not(.notes-on) .n-only{display:none}
+
+/* score bars */
+.sbars{display:grid;gap:12px}
+.sbar{display:grid;grid-template-columns:minmax(0,9.5em) minmax(0,1fr) auto;align-items:center;gap:12px;font-size:var(--t-sm)}
+.sbar-k{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sbar-track{height:10px;border-radius:99px;background:var(--sunken);overflow:hidden}
+.sbar-fill{display:block;height:100%;width:0;border-radius:99px;background:var(--muted);transition:width 1s cubic-bezier(.2,.7,.2,1)}
+.sbar.win .sbar-fill{background:var(--signal)}
+.sbar-v{font-family:var(--f-mono);font-size:var(--t-xs);color:var(--muted);font-variant-numeric:tabular-nums;min-width:2.5em;text-align:right}
+.sbars.go .sbar-fill,.sbars.static .sbar-fill{width:var(--w)}
+.sbars.static .sbar-fill{transition:none}
+.note .sbar{grid-template-columns:minmax(0,1fr) 70px auto;font-size:var(--t-xs);gap:8px}
+@media (prefers-reduced-motion:reduce){ .sbar-fill{transition:none} .noise-track{animation:none} .dots i{animation:none;opacity:.7} }
+
+/* result */
+.result{display:grid;gap:18px}
+.rhead{display:grid;gap:10px;padding-bottom:4px}
+.rtitle{font-family:var(--f-display);font-stretch:112%;font-weight:800;font-size:clamp(2.2rem,1rem + 4cqi,3.4rem);letter-spacing:-.03em;line-height:1}
+.rgrid{display:grid;grid-template-columns:minmax(0,1fr);gap:18px}
+@container (min-width:780px){ .rgrid{grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr);align-items:start} }
+.rmain{display:grid;gap:18px;min-width:0}
+.rside{display:grid;gap:10px;min-width:0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px 22px;display:grid;gap:14px}
+.ph{font-family:var(--f-mono);font-size:var(--t-xs);font-weight:500;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.spec{display:grid;grid-template-columns:minmax(0,8.5em) minmax(0,1fr);gap:12px 18px;margin:0}
+.spec dt{font-size:var(--t-sm);color:var(--muted);padding-top:1px}
+.spec dd{margin:0;font-weight:550;min-width:0}
+.src{font-family:var(--f-mono);font-size:var(--t-xxs);color:var(--pen);font-weight:400;margin-left:8px;white-space:nowrap}
+.coinchips{display:inline-flex;flex-wrap:wrap;gap:6px;vertical-align:middle}
+.coinchips span{font-family:var(--f-mono);font-size:var(--t-xs);border:1px solid var(--line);border-radius:6px;padding:1px 7px;background:var(--sunken)}
+@media (max-width:460px){ .spec{grid-template-columns:minmax(0,1fr);gap:2px} .spec dd{margin-bottom:10px} }
+.fine{font-size:var(--t-sm);color:var(--muted)}
+.reasons{list-style:none;padding:0;display:grid;gap:12px}
+.reasons li{display:grid;gap:2px}
+.r-k{font-size:var(--t-xs);color:var(--muted);font-family:var(--f-mono);text-transform:uppercase;letter-spacing:.07em}
+.reasons q{font-weight:550}
+.reassure{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:start;padding:16px 20px;border-radius:16px;border:1.5px solid var(--line);background:var(--surface)}
+.reassure svg{width:26px;height:26px;color:var(--up)}
+.reassure b{display:block;margin-bottom:2px}
+.cta-panel{background:var(--cta-bg);color:var(--cta-ink);border-radius:18px;padding:clamp(20px,4cqi,32px);display:grid;grid-template-columns:minmax(0,1fr);gap:22px}
+@container (min-width:720px){ .cta-panel{grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);align-items:center} }
+.cta-panel h3{font-family:var(--f-display);font-stretch:108%;font-weight:750;font-size:var(--t-lg);margin-bottom:12px}
+.next{padding-left:1.3em;display:grid;gap:6px;font-size:var(--t-sm);color:var(--cta-ink)}
+.next li::marker{font-family:var(--f-mono);color:var(--signal)}
+.cta-act{display:grid;gap:12px;justify-items:start}
+.cta-fine{font-size:var(--t-xs);color:var(--cta-muted);line-height:1.5}
+.cta-fine code{color:var(--cta-ink);overflow-wrap:anywhere}
+.alt{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;font-size:var(--t-sm);color:var(--muted)}
+
+/* bot */
+.botwrap{max-width:760px;margin-inline:auto;display:grid;gap:18px}
+.bot-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.bot-title{font-family:var(--f-display);font-stretch:108%;font-weight:800;font-size:clamp(1.6rem,1rem + 2.4cqi,2.3rem);letter-spacing:-.02em}
+.stages{list-style:none;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.stages li{border-top:3px solid var(--line);padding-top:8px;font-size:var(--t-sm);display:grid;gap:1px}
+.stages li b{font-weight:600}
+.stages li span{font-family:var(--f-mono);font-size:var(--t-xxs);color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.stages li.done{border-top-color:var(--signal)}
+.stages li:not(.done) b{color:var(--muted)}
+@media (max-width:560px){ .stages{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:12px} }
+.chat--app{width:100%;max-width:440px;margin-inline:auto;display:flex;flex-direction:column;height:clamp(480px,72vh,660px)}
+.chat--app .chat-log{flex:1;overflow-y:auto;scroll-behavior:smooth}
+.bot-after{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+.bot-after[hidden]{display:none}
+
+/* reviewer notes */
+.note{border:1.5px dashed var(--pen);border-radius:12px;padding:14px 16px;background:var(--pen-wash);font-size:var(--t-sm);display:grid;gap:8px;min-width:0}
+.note h4{font-family:var(--f-mono);font-size:var(--t-xxs);font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--pen)}
+.note code{font-size:var(--t-xs);overflow-wrap:anywhere}
+.ndl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;margin:0}
+.ndl dt{color:var(--pen);font-family:var(--f-mono);font-size:var(--t-xs)}
+.ndl dd{margin:0}
+.nlist{padding-left:1.1em;display:grid;gap:3px}
+.evlog{list-style:none;padding:0;display:grid;gap:5px;font-size:var(--t-xs)}
+.evlog li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 8px}
+.evlog .ev-t{font-family:var(--f-mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.evlog .ev-p{grid-column:2;font-family:var(--f-mono);color:var(--muted);font-size:var(--t-xxs);overflow-wrap:anywhere}
+
+/* strategy doc */
+.doc{max-width:780px;margin-inline:auto;padding-block:44px 72px}
+.doc-head{display:grid;gap:16px;padding-bottom:28px}
+.doc-title{font-family:var(--f-display);font-stretch:110%;font-weight:800;font-size:clamp(2.1rem,1.4rem + 3vw,3.2rem);letter-spacing:-.03em;line-height:1.02}
+.toc{display:flex;flex-wrap:wrap;gap:6px}
+.toc button{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:4px 12px;font-size:var(--t-xs);font-weight:600;cursor:pointer;color:var(--muted)}
+.toc button:hover{color:var(--ink);border-color:var(--ink)}
+.toc button span{font-family:var(--f-mono);color:var(--signal-text);margin-right:5px}
+.doc section{border-top:1px solid var(--line);padding-block:34px;display:grid;gap:14px;scroll-margin-top:80px}
+.doc h2{font-family:var(--f-display);font-stretch:106%;font-weight:750;font-size:var(--t-xl);letter-spacing:-.02em;display:flex;align-items:baseline;gap:14px}
+.doc h2 .num{font-family:var(--f-mono);font-size:var(--t-sm);font-weight:500;color:var(--signal-text);letter-spacing:0}
+.doc h3{font-size:var(--t-md);font-weight:700;margin-top:10px}
+.doc p,.doc li{max-width:66ch}
+.doc ul,.doc ol{padding-left:1.25em;display:grid;gap:7px}
+.doc .small{font-size:var(--t-sm);color:var(--muted)}
+.segs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:720px){ .segs{grid-template-columns:minmax(0,1fr)} }
+.seg{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:grid;gap:6px;align-content:start;font-size:var(--t-sm)}
+.seg h4{font-size:var(--t-base);font-weight:700}
+.seg-k{font-family:var(--f-mono);font-size:var(--t-xxs);letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.seg.mvp .seg-k{color:var(--signal-text)}
+.seg-r{color:var(--muted);margin-top:4px}
+.seg-r b{color:var(--ink)}
+.kv{display:grid;grid-template-columns:minmax(0,10em) minmax(0,1fr);gap:14px 22px;margin:0}
+.kv dt{font-weight:700}
+.kv dd{margin:0;max-width:62ch}
+@media (max-width:560px){ .kv{grid-template-columns:minmax(0,1fr);gap:4px} .kv dd{margin-bottom:12px} }
+.btn-sample{display:inline-block;background:var(--signal);color:var(--on-signal);font-weight:650;border-radius:7px;padding:1px 9px;font-size:var(--t-sm);margin-right:6px}
+.flow{list-style:none;padding:0 !important;margin-top:6px;display:grid;gap:0 !important;counter-reset:f}
+.flow li{position:relative;display:grid;grid-template-columns:30px minmax(0,1fr);column-gap:14px;padding-bottom:18px;max-width:none}
+.flow li::before{counter-increment:f;content:counter(f);width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--surface);border:1.5px solid var(--line);font-family:var(--f-mono);font-size:var(--t-xs);position:relative;z-index:1}
+.flow li::after{content:"";position:absolute;left:14.25px;top:30px;bottom:0;width:1.5px;background:var(--line)}
+.flow li:last-child{padding-bottom:0}
+.flow li:last-child::after{display:none}
+.flow li > div{display:grid;gap:2px;padding-top:3px;min-width:0}
+.flow .fd{color:var(--muted);font-size:var(--t-sm)}
+.flow code{font-size:var(--t-xs);color:var(--muted);overflow-wrap:anywhere}
+.flow .tag{display:inline-block;font-family:var(--f-mono);font-size:var(--t-xxs);text-transform:uppercase;letter-spacing:.07em;border-radius:99px;padding:0 8px;margin-left:6px;vertical-align:2px;border:1px solid currentColor}
+.flow li.mid::before{border-color:var(--pen);color:var(--pen)}
+.flow li.mid .tag{color:var(--pen)}
+.flow li.act::before,.flow li.val::before{background:var(--signal);border-color:var(--signal);color:var(--on-signal)}
+.flow li.act .tag,.flow li.val .tag{color:var(--signal-text)}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:var(--t-sm)}
+th{font-family:var(--f-mono);font-size:var(--t-xxs);letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:500;background:var(--sunken)}
+th,td{padding:10px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+tbody tr:last-child td{border-bottom:0}
+td.num{font-family:var(--f-mono);white-space:nowrap;font-variant-numeric:tabular-nums}
+td code{font-size:var(--t-xs)}
+.added{display:inline-block;font-family:var(--f-mono);font-size:var(--t-xxs);text-transform:uppercase;letter-spacing:.06em;color:var(--signal-text);margin-left:4px}
+details.all-opts summary{cursor:pointer;font-weight:600;font-size:var(--t-sm);color:var(--pen);padding-block:4px}
+details.all-opts[open] summary{margin-bottom:10px}
+pre.code{margin:0;font-family:var(--f-mono);font-size:var(--t-sm);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;overflow-x:auto}
+.callout{border-left:3px solid var(--signal);background:var(--surface);border-radius:0 12px 12px 0;padding:14px 18px;max-width:66ch}
+.split{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:640px){ .split{grid-template-columns:minmax(0,1fr)} }
+.split > div{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;display:grid;gap:8px;align-content:start}
+.split h3{margin-top:0}
+.split ul{font-size:var(--t-sm)}
+.try{justify-self:start}
+
+/* footer */
+.foot{border-top:1px solid var(--line);background:var(--surface)}
+.foot .wrap{padding-block:18px;font-size:var(--t-xs);color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:space-between}
+</style>
+
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 28 28" aria-hidden="true"><rect width="28" height="28" rx="7"/><polyline points="4,15 9,15 11.5,9 15,20.5 17.5,12 19.5,15 24,15" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>CryptoPulse</span>
+    </div>
+    <span class="badge">Concept · test task</span>
+    <div class="bar-right">
+      <div class="views" role="tablist" aria-label="View">
+        <button type="button" role="tab" id="tab-prototype" aria-controls="view-prototype" aria-selected="true" data-view="prototype">Prototype</button>
+        <button type="button" role="tab" id="tab-strategy" aria-controls="view-strategy" aria-selected="false" data-view="strategy">Strategy</button>
+      </div>
+      <label class="notes-toggle" id="notes-label" for="notes-switch"><input type="checkbox" id="notes-switch" role="switch" checked><span class="lbl-long">Reviewer notes</span><span class="lbl-short">Notes</span></label>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="view-prototype" class="view view-proto" role="tabpanel" aria-labelledby="tab-prototype">
+    <div class="wrap proto">
+      <div class="stage" id="stage"></div>
+      <aside class="notes" id="notes" aria-label="Reviewer notes"></aside>
+    </div>
+  </section>
+
+  <section id="view-strategy" class="view" role="tabpanel" aria-labelledby="tab-strategy" hidden>
+    <div class="wrap">
+      <article class="doc">
+        <header class="doc-head">
+          <p class="eyebrow">Marketing quiz funnel · test task</p>
+          <h1 class="doc-title">CryptoPulse: from quiz to first alert</h1>
+          <p class="lede">How the funnel works, why each step is there, and how I would measure it. The clickable version is in the Prototype tab.</p>
+          <nav class="toc" aria-label="Sections">
+            <button type="button" data-goto="s1"><span>01</span>Summary</button>
+            <button type="button" data-goto="s2"><span>02</span>First screen</button>
+            <button type="button" data-goto="s3"><span>03</span>Quiz</button>
+            <button type="button" data-goto="s4"><span>04</span>CTA and Telegram</button>
+            <button type="button" data-goto="s5"><span>05</span>Metrics</button>
+            <button type="button" data-goto="s6"><span>06</span>Hypotheses</button>
+            <button type="button" data-goto="s7"><span>07</span>Risks</button>
+            <button type="button" data-goto="s8"><span>08</span>AI in the process</button>
+          </nav>
+          <button type="button" class="btn-signal try" data-view-go="prototype">Try the prototype</button>
+        </header>
+
+        <section id="s1">
+          <h2><span class="num">01</span>Executive summary</h2>
+          <p><b>CryptoPulse</b> is a concept for a crypto market monitoring service. It helps people track the assets they choose and understand market changes through personalized alerts in Telegram.</p>
+          <p>The funnel's goal is more than collecting answers. It should help the visitor understand which monitoring setup fits their needs, and give them a reason to start using the product.</p>
+
+          <h3>User problem</h3>
+          <p>People who are just getting into crypto can run into information overload: countless assets, charts, indicators and constant price changes. More experienced users need specific alerts without having to check the market by hand.</p>
+          <p><span class="hyp">Hypothesis</span>This is an initial product hypothesis. It still needs to be checked with user research.</p>
+
+          <h3>Target audience</h3>
+          <div class="segs">
+            <div class="seg mvp"><p class="seg-k">MVP</p><h4>Crypto beginners</h4><p>Want to make sense of market data and don't know what to watch.</p><p class="seg-r">Quiz result: <b>Market Basics</b></p></div>
+            <div class="seg mvp"><p class="seg-k">MVP</p><h4>Casual market followers</h4><p>Already follow a few coins but don't want to keep opening an exchange.</p><p class="seg-r">Quiz result: <b>Watchlist Pulse</b></p></div>
+            <div class="seg"><p class="seg-k">Later</p><h4>Active market watchers</h4><p>Want to set specific price thresholds and get the information fast.</p><p class="seg-r">Quiz result: <b>Price Level Alerts</b></p></div>
+          </div>
+          <p>For the MVP I would start with the first two segments: their needs are easier to serve without complex trading features. Active watchers still get a basic result (simple price levels), so nobody finishes the quiz at a dead end, and their share of completions shows when the segment is worth building for.</p>
+
+          <h3>The funnel at a glance</h3>
+          <ol class="flow">
+            <li><div><b>Quiz-first landing</b><span class="fd">The visitor sees the promise and starts the quiz on the same page.</span><code>landing_view → quiz_start</code></div></li>
+            <li><div><b>Quiz, 7 questions</b><span class="fd">About a minute. Every answer feeds the result.</span><code>question_answered ×7 → quiz_complete</code></div></li>
+            <li><div><b>Personal result</b><span class="fd">The setup, the reasons for it, a message preview and an answer to the user's main concern.</span><code>result_view</code></div></li>
+            <li><div><b>Final CTA</b><span class="fd">“Open my setup in Telegram”, with the next steps written above the button.</span><code>cta_telegram_click</code></div></li>
+            <li class="mid"><div><b>Telegram bot opened <span class="tag">intermediate conversion</span></b><span class="fd">Deep link with a setup code. The bot already knows the recommendation.</span><code>bot_start</code></div></li>
+            <li class="act"><div><b>Monitoring switched on <span class="tag">activation</span></b><span class="fd">Coins confirmed, trigger or summary time chosen.</span><code>monitoring_active</code></div></li>
+            <li class="val"><div><b>First useful alert <span class="tag">value</span></b><span class="fd">The moment the product actually delivers what the quiz promised.</span><code>first_alert_delivered</code></div></li>
+          </ol>
+        </section>
+
+        <section id="s2">
+          <h2><span class="num">02</span>First screen: quiz-first landing page</h2>
+          <p>The quiz is the centre of the landing page, not an extra step after a long landing page. The first screen has one job: get the visitor to start the quiz.</p>
+          <dl class="kv">
+            <dt>Value proposition</dt><dd>Spend about a minute and get a personal crypto monitoring setup.</dd>
+            <dt>Headline</dt><dd>“Follow crypto without watching charts all day.” It speaks to both MVP segments: beginners want to understand the market, casual followers want to stop checking it.</dd>
+            <dt>Primary CTA</dt><dd><span class="btn-sample">Find my setup</span>The quiz starts in place, on the same page.</dd>
+            <dt>Trust line</dt><dd>No exchange login or API keys, no deposits, no email needed to see the result. For a crypto audience, a request for exchange access is a strong trust barrier, so the screen rules it out before the first click.</dd>
+            <dt>Visual</dt><dd>A noisy feed of price changes next to three calm example messages: the problem and the outcome side by side.</dd>
+          </dl>
+          <p><span class="hyp">Hypothesis</span>Instead of an abstract call to sign up, the visitor is offered a concrete result that matches their interests. That could raise the start rate, but it is a hypothesis, not a proven effect (see section 06).</p>
+          <p>One deliberate choice: <b>no email gate before the result.</b> Many quiz funnels ask for an email to unlock the result. Here the conversion that matters is opening the bot, and a gate would add a step and a reason to leave right before it. If email becomes useful later, it can be an optional field on the result screen and an A/B test.</p>
+        </section>
+
+        <section id="s3">
+          <h2><span class="num">03</span>Quiz: 7 questions</h2>
+          <p>The quiz identifies the user's monitoring need, not their personality. Every answer has to change something in the recommendation or the setup. An answer that changes nothing only creates an impression of personalization, and that question should go.</p>
+          <div class="tbl-wrap"><table id="qtable"></table></div>
+          <p class="small">Questions 1 to 5 follow the original logic. I added 6 and 7 for the steps after the quiz: question 6 prefills the watchlist so the setup in the bot takes fewer taps, and question 7 lets the result screen answer the user's main concern right next to the CTA.</p>
+
+          <h3>How the recommendation is calculated</h3>
+          <ol>
+            <li>Each answer gives 0 to 2 points to one or more of the three setups.</li>
+            <li>Points are multiplied by the question's weight. Motivation (×3) counts the most, then data type (×2) and expected value (×1.5).</li>
+            <li>The setup with the highest total wins. Ties go to the simpler setup (Market Basics, then Watchlist Pulse, then Price Level Alerts), in line with the MVP focus.</li>
+            <li>Questions 2, 3, 4, 6 and 7 also set details of the setup: how much messages explain, the main feature, delivery, coins and the reassurance message.</li>
+          </ol>
+          <p>With reviewer notes on, the prototype shows the points behind every answer and the running totals.</p>
+          <details class="all-opts">
+            <summary>All answer options and their points</summary>
+            <div class="tbl-wrap"><table id="otable"></table></div>
+          </details>
+        </section>
+
+        <section id="s4">
+          <h2><span class="num">04</span>Result, final CTA and the move to Telegram</h2>
+          <p>After seeing the result, the user should understand exactly what they get when they tap the button.</p>
+          <h3>What the result screen shows</h3>
+          <ul>
+            <li><b>The setup and a one-line promise</b>, for example “Watchlist Pulse: your coins on a watchlist, and a message only when something important happens.”</li>
+            <li><b>What you'll get:</b> coins, trigger, delivery, explanation level and main feature, each set by a specific answer.</li>
+            <li><b>Why this setup:</b> the user's own answers quoted back, the ones that weighed most.</li>
+            <li><b>A preview of a real message</b> written at the user's explanation level, so the value is visible before the click.</li>
+            <li><b>An answer to the concern</b> from question 7, placed right before the CTA.</li>
+            <li><b>The CTA with the next steps written next to it:</b> “Open my setup in Telegram.”</li>
+            <li><b>A way out:</b> switch to another setup or retake the quiz. How often people switch tells us whether the scoring is right.</li>
+          </ul>
+          <h3>What happens after the CTA</h3>
+          <ol>
+            <li>The user opens the Telegram bot through a link with a parameter that carries the ID of their recommendation.</li>
+            <li>The bot explains the recommended setup and asks which coins to watch.</li>
+            <li>The user sets price thresholds or picks a summary format.</li>
+            <li>The bot confirms the settings and switches monitoring on.</li>
+          </ol>
+          <p>The prototype simulates this conversation, including a sample first alert.</p>
+          <h3>Deep link</h3>
+          <pre class="code">https://t.me/&lt;bot_username&gt;?start=wp-std-big-btc-eth</pre>
+          <p>Telegram passes the <code>start</code> parameter to the bot together with the /start command. It allows up to 64 characters: Latin letters, digits, underscore and hyphen. In the prototype the code describes only the setup (setup, explanation level, delivery, coins). Personal or sensitive data never goes into the URL.</p>
+          <p>For production I would switch to a short random ID, for example <code>r_k3f9x2</code>, that points to the stored quiz result. The link then means nothing to anyone who sees it, and web analytics can be joined to bot events, so the whole funnel from landing to activation is measurable.</p>
+          <div class="callout"><b>Key point.</b> Opening Telegram is an intermediate conversion, not full activation. The user gets real value only after setting up monitoring and starting to receive relevant alerts. That is why the bot onboarding counts as part of the funnel and is measured the same way as the quiz.</div>
+          <h3>Desktop visitors</h3>
+          <p>On desktop, a t.me link opens Telegram Desktop or the web version. The result screen should also show a QR code, so the user can continue on their phone, where alerts are most useful.</p>
+        </section>
+
+        <section id="s5">
+          <h2><span class="num">05</span>Metrics</h2>
+          <div class="tbl-wrap"><table>
+            <thead><tr><th>Stage</th><th>Metric</th><th>What it tells us</th></tr></thead>
+            <tbody>
+              <tr><td>Landing</td><td>Quiz start rate<br><code>quiz_start / landing_view</code></td><td>Whether the promise on the first screen works</td></tr>
+              <tr><td>Quiz</td><td>Completion rate and drop-off by question</td><td>Which question costs us people</td></tr>
+              <tr><td>Result</td><td>CTA click rate<br><code>cta_telegram_click / result_view</code></td><td>Whether the result feels worth acting on</td></tr>
+              <tr><td>Result</td><td>Setup switch rate</td><td>If it is high, the scoring or the result copy is off</td></tr>
+              <tr><td>Telegram</td><td>Bot start rate<br><code>bot_start / cta_telegram_click</code></td><td>Friction of the move: no Telegram installed, desktop, slow load</td></tr>
+              <tr><td>Bot</td><td>Activation rate<br><code>monitoring_active / bot_start</code></td><td>The conversion that matters</td></tr>
+              <tr><td>Value</td><td>Activated users who get a first alert within 7 days</td><td>Whether the triggers produce anything at all</td></tr>
+              <tr><td>Retention</td><td>Users still subscribed and not muted on day 7 and day 30</td><td>Whether the alerts help or turn into noise</td></tr>
+            </tbody>
+          </table></div>
+          <p>The main number for the whole funnel is <b>activation per landing view</b> (<code>monitoring_active / landing_view</code>). Targets get set once the first traffic comes in, not guessed upfront. The distribution of quiz results is tracked as well: it is the first real check of the segment hypothesis.</p>
+          <p class="small">Events: <code>landing_view</code>, <code>quiz_start</code>, <code>question_answered {q, answer}</code>, <code>quiz_complete {setup}</code>, <code>result_view {setup}</code>, <code>result_setup_switched {from, to}</code>, <code>cta_telegram_click {setup_code}</code>, <code>bot_start {start_param}</code>, <code>coins_selected {count}</code>, <code>trigger_set {type}</code>, <code>monitoring_active</code>, <code>first_alert_delivered</code>, <code>alerts_muted</code>. The prototype logs them live in the reviewer notes.</p>
+        </section>
+
+        <section id="s6">
+          <h2><span class="num">06</span>Hypotheses to test</h2>
+          <div class="tbl-wrap"><table>
+            <thead><tr><th>Hypothesis</th><th>Test</th><th>Main metric</th></tr></thead>
+            <tbody>
+              <tr><td>A quiz-first landing brings more people to activation than a classic landing with a sign-up CTA</td><td>A/B: quiz-first vs a feature landing with “Start in Telegram”</td><td>Activation per landing view</td></tr>
+              <tr><td>Showing question 1 on the first screen beats a CTA button</td><td>A/B: “Find my setup” vs the answers to Q1 right in the hero</td><td>Quiz start rate</td></tr>
+              <tr><td>Questions 6 and 7 pay for themselves</td><td>7 questions vs 5</td><td>Completion × CTA click × activation</td></tr>
+              <tr><td>Quoting the user's answers back makes the result more convincing</td><td>Result with vs without “Why this setup”</td><td>CTA click rate, switch rate</td></tr>
+              <tr><td>The three segments exist in roughly this shape</td><td>8 to 10 user interviews plus the result distribution of the first completions</td><td>Share of each result, answer patterns</td></tr>
+              <tr><td>No email gate works better than a gate</td><td>No email vs optional vs required</td><td>Activation, reach outside Telegram</td></tr>
+            </tbody>
+          </table></div>
+        </section>
+
+        <section id="s7">
+          <h2><span class="num">07</span>Risks and guardrails</h2>
+          <ul>
+            <li><b>Not financial advice.</b> CryptoPulse sends market data and alerts, never buy or sell signals. The copy avoids promises of profit and “don't miss out” pressure, and the bot says so when monitoring starts.</li>
+            <li><b>Trust and security.</b> No exchange login, API keys, wallet connection or deposits at any step. This is stated on the first screen and next to the final CTA.</li>
+            <li><b>Privacy.</b> The deep link carries only a setup code or a random ID. Analytics run on anonymous IDs.</li>
+            <li><b>Notification fatigue.</b> Frequency caps, quiet hours on by default, one-tap pause. A muted bot is a lost user, so the mute rate is watched as closely as activation.</li>
+            <li><b>Channel dependency.</b> Everything runs through Telegram. If many visitors don't use it (the bot start rate will show it), an email digest is the fallback to test.</li>
+            <li><b>Data quality.</b> Every alert shows its price source and time, so users can check it.</li>
+          </ul>
+        </section>
+
+        <section id="s8">
+          <h2><span class="num">08</span>How AI was used</h2>
+          <p>I used AI as a working partner: I set the direction and the constraints, and the AI expanded them and built the prototype.</p>
+          <div class="split">
+            <div>
+              <h3>My decisions</h3>
+              <ul>
+                <li>The product concept and the problem hypothesis</li>
+                <li>Three audience segments and the MVP focus on the first two</li>
+                <li>The funnel shape: quiz-first landing, result, Telegram as the activation channel</li>
+                <li>The logic of questions 1 to 5: what each one measures and how it is used</li>
+                <li>Constraints: no exchange login, API keys or deposits; no personal data in the link; every hypothesis labelled as one</li>
+              </ul>
+            </div>
+            <div>
+              <h3>What the AI did (Claude)</h3>
+              <ul>
+                <li>Expanded the brief into the full question set, including questions 6 and 7 and all answer options</li>
+                <li>Proposed the scoring model, the weights and the tie-break rule</li>
+                <li>Wrote the interface copy and the sample bot messages</li>
+                <li>Built this page: the clickable quiz, the result logic, the Telegram bot simulation and the reviewer notes</li>
+                <li>Drafted the metrics, the test plan and the risk list from the brief</li>
+              </ul>
+            </div>
+          </div>
+          <p>The rule I gave the AI is the same one I use to review its work: the quiz measures needs, not personality, and an answer that changes nothing gets cut.</p>
+        </section>
+      </article>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <span>CryptoPulse is a concept made for a test task. Market data on this page is sample data.</span>
+    <span>Market data and alerts only. Not financial advice.</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------- data ---------- */
+const COINS = {
+  BTC:{name:'Bitcoin', price:104820, ch:1.2},
+  ETH:{name:'Ethereum', price:3912, ch:-0.8},
+  SOL:{name:'Solana', price:182.4, ch:6.3},
+  TON:{name:'Toncoin', price:5.62, ch:-1.9},
+  XRP:{name:'XRP', price:2.41, ch:0.4},
+  BNB:{name:'BNB', price:712, ch:0.9}
+};
+const NOISE = [['BTC',1.2],['ETH',-0.8],['SOL',6.3],['TON',-1.9],['XRP',0.4],['BNB',0.9],['ADA',-2.7],['DOGE',5.1],['AVAX',-3.3],['DOT',-1.1],
+               ['LINK',2.2],['TRX',0.3],['LTC',-0.6],['NEAR',4.4],['APT',-2.0],['ARB',-4.8],['OP',1.7],['SUI',6.2],['ATOM',-1.4],['UNI',2.9]];
+
+const SETUPS = {
+  mb:{id:'mb', short:'Basics', name:'Market Basics',
+      tagline:'A calm read on the market in plain words, without charts.',
+      trigger:'A summary on your schedule, plus a heads-up on moves over ±10% in 24h',
+      step3:'Pick when your summary arrives.',
+      defaultCoins:['BTC','ETH']},
+  wp:{id:'wp', short:'Pulse', name:'Watchlist Pulse',
+      tagline:'Your coins on a watchlist, and a message only when something important happens.',
+      trigger:'An alert when a coin on your list moves more than ±5% in 24h',
+      step3:'Pick how big a move should trigger an alert.',
+      defaultCoins:['BTC','ETH','SOL']},
+  ta:{id:'ta', short:'Levels', name:'Price Level Alerts',
+      tagline:'Exact price levels you choose, with an alert the moment one is crossed.',
+      trigger:'An alert when a coin crosses a price level you set',
+      step3:'Set your first price level.',
+      defaultCoins:['BTC'],
+      roadmap:'Coming later: alerts on trading volume and on combined conditions.'}
+};
+const ORDER = ['mb','wp','ta'];
+
+const LEVELS = {
+  plain:{code:'pln', label:'Plain language, with terms explained'},
+  standard:{code:'std', label:'Short context, light on jargon'},
+  compact:{code:'cmp', label:'Compact: numbers and times only'}
+};
+const FREQ = {
+  instant:{code:'ins', label:'Instant, as soon as a trigger fires', bot:'Alerts arrive right away'},
+  big:{code:'big', label:'Only when a trigger fires, nothing else', bot:'Only trigger alerts, no extra messages'},
+  daily:{code:'day', label:'One summary a day, at a time you pick', bot:'Trigger alerts plus a short summary at 19:00'},
+  weekly:{code:'wk', label:'A weekly recap on Sunday', bot:'Trigger alerts plus a Sunday recap'}
+};
+const FOCUS = {
+  context:'Each message says why the price moved',
+  moves:'Big-move alerts for your watchlist',
+  levels:'Alerts at exact price levels',
+  overview:'A short overview of the whole market'
+};
+const WORRY = {
+  spam:{title:'You mentioned too many notifications.', text:'You set the rhythm. Quiet hours (23:00–08:00) are on by default, alerts are capped at 5 a day, and one tap pauses everything.'},
+  keys:{title:'You mentioned connecting an exchange or wallet.', text:'CryptoPulse uses public market data only. No exchange login, no API keys, no wallet, no deposits.'},
+  complex:{title:'You mentioned a complicated setup.', text:'Setup takes three taps in Telegram, with your quiz answers already filled in. You can change anything later with /settings.'},
+  trust:{title:'You mentioned data accuracy.', text:'Every alert shows its price source and the time of the reading, so you can check it yourself.'}
+};
+
+const QUESTIONS = [
+  {id:'goal', n:1, weight:3, reason:'Your goal',
+   title:'What brings you to crypto market data?', hint:'Pick the one closest to you.',
+   learn:'Main motivation', use:'Strongest signal for which setup fits.',
+   options:[
+     {id:'learn', label:"I'm new and want to understand what's going on", pts:{mb:2}},
+     {id:'hold', label:'I hold a few coins and want to know when something important happens', pts:{wp:2}},
+     {id:'react', label:'I want to know the moment a coin reaches a price I care about', pts:{ta:2}},
+     {id:'curious', label:"I'm curious and want to keep an eye on the market", pts:{mb:1, wp:1}}
+   ]},
+  {id:'exp', n:2, weight:1, reason:'Your experience',
+   title:'How familiar are you with crypto?',
+   learn:'Experience level', use:'Sets how much each message explains. Small setup signal.',
+   options:[
+     {id:'none', label:"I haven't bought any crypto yet", pts:{mb:2}, level:'plain'},
+     {id:'little', label:"I've bought a little but don't follow it closely", pts:{mb:1, wp:1}, level:'plain'},
+     {id:'basics', label:'I check prices now and then and know the basics', pts:{wp:2}, level:'standard'},
+     {id:'pro', label:'I follow charts and price levels regularly', pts:{ta:2}, level:'compact'}
+   ]},
+  {id:'data', n:3, weight:2, reason:'What you want to get',
+   title:'What would be most useful to get?',
+   learn:'Type of data needed', use:'Sets the main feature of the setup.',
+   options:[
+     {id:'why', label:'Short explanations of why prices moved', pts:{mb:2}, focus:'context'},
+     {id:'moves', label:'A heads-up when my coins make a big move', pts:{wp:2}, focus:'moves'},
+     {id:'levels', label:'Alerts at exact price levels I set', pts:{ta:2}, focus:'levels'},
+     {id:'overview', label:'A quick overview of the whole market', pts:{mb:1, wp:1}, focus:'overview'}
+   ]},
+  {id:'freq', n:4, weight:1, reason:'How often',
+   title:'How often do you want to hear from CryptoPulse?',
+   learn:'Alert frequency', use:'Sets the delivery format: instant, big moves only, daily or weekly.',
+   options:[
+     {id:'instant', label:'Right away, whenever something I track happens', pts:{ta:2}},
+     {id:'big', label:'Only when something big happens', pts:{wp:2}},
+     {id:'daily', label:'One short summary a day', pts:{mb:1, wp:1}},
+     {id:'weekly', label:'A weekly recap is enough', pts:{mb:2}}
+   ]},
+  {id:'value', n:5, weight:1.5, reason:'What makes it worth keeping',
+   title:'What would make CryptoPulse worth keeping?',
+   learn:'Expected value', use:'Refines the recommendation when earlier answers point different ways.',
+   options:[
+     {id:'understand', label:'Understanding the market without reading charts', pts:{mb:2}},
+     {id:'noapp', label:'Not having to open an exchange app all the time', pts:{wp:2}},
+     {id:'nomiss', label:'Knowing the moment my price level is reached', pts:{ta:2}},
+     {id:'time', label:'Less time spent on news and noise', pts:{mb:1, wp:1}}
+   ]},
+  {id:'coins', n:6, weight:1, type:'multi', added:true, reason:'Your coins',
+   title:'Which coins do you want to watch?', hint:'Pick any. You can change them in Telegram later.',
+   learn:'Assets of interest', use:'Prefills the watchlist in the bot. “Not sure” leans to Market Basics.',
+   options:Object.keys(COINS).map(k => ({id:k, label:COINS[k].name, sub:k}))
+     .concat([{id:'unsure', label:'Not sure yet, suggest some for me', pts:{mb:1}, exclusive:true}])},
+  {id:'worry', n:7, weight:0, added:true, reason:'Your concern',
+   title:'What would put you off an alert service?', hint:"We'll show how CryptoPulse handles it.",
+   learn:'Main concern', use:'Picks the reassurance shown next to the final CTA. No effect on scoring.',
+   options:[
+     {id:'spam', label:'Too many notifications'},
+     {id:'keys', label:'Having to connect my exchange or wallet'},
+     {id:'complex', label:'A complicated setup'},
+     {id:'trust', label:'Not knowing if the data is accurate'}
+   ]}
+];
+const MAX_SCORE = 18;
+const KEYS = ['A','B','C','D','E','F','G'];
+
+/* ---------- helpers ---------- */
+const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const store = {
+  get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } },
+  set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+};
+const wait = ms => new Promise(r => setTimeout(r, ms));
+const fmtNum = n => String(Math.round(n*10)/10);
+const fmtPct = n => (n > 0 ? '+' : n < 0 ? '−' : '') + Math.abs(n).toFixed(1) + '%';
+const fmtPrice = n => '$' + (n >= 1000 ? Math.round(n).toLocaleString('en-US') : n.toFixed(2));
+const pct = n => `<span class="${n >= 0 ? 'up' : 'down'}">${fmtPct(n)}</span>`;
+function nice(n){ const step = n >= 10000 ? 500 : n >= 1000 ? 50 : n >= 100 ? 5 : n >= 10 ? 0.5 : 0.05; return Math.round(n/step)*step; }
+const ICON = {
+  arrow:'<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10h12M11 5l5 5-5 5"/></svg>',
+  clock:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="8" r="6.25"/><path d="M8 4.5V8l2.5 1.5" stroke-linecap="round"/></svg>',
+  check:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5l3 3 7-7"/></svg>',
+  shield:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7.5 3v5.5c0 4.6-3.2 8.3-7.5 9.5-4.3-1.2-7.5-4.9-7.5-9.5V6L12 3z"/><path d="M8.5 12l2.5 2.5 4.5-5" stroke-linecap="round"/></svg>',
+  pulse:'<svg viewBox="0 0 20 20" aria-hidden="true"><polyline points="2,11 6,11 8,6 11,15 13,8.5 14.5,11 18,11" fill="none" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+};
+const chatHead = sub => `<div class="chat-head"><span class="avatar">${ICON.pulse}</span><div><b>CryptoPulse</b><span>${sub}</span></div></div>`;
+
+/* ---------- state ---------- */
+const state = { screen:'landing', q:0, answers:{}, override:null, notes: store.get('cp-notes') !== '0' };
+const stage = document.getElementById('stage');
+const notesEl = document.getElementById('notes');
+const t0 = performance.now();
+const events = [];
+let lock = false, buildTimer = null, firstRender = true, bot = null;
+
+function track(name, props){
+  events.push({t: performance.now() - t0, name, props: props || {}});
+  renderEventLog();
+}
+
+/* ---------- scoring ---------- */
+function optOf(qid){
+  const q = QUESTIONS.find(x => x.id === qid);
+  return q && q.options.find(o => o.id === state.answers[qid]);
+}
+function compute(){
+  const scores = {mb:0, wp:0, ta:0}, contrib = [];
+  for(const q of QUESTIONS){
+    const a = state.answers[q.id];
+    const chosen = q.type === 'multi' ? q.options.filter(o => (a || []).includes(o.id)) : q.options.filter(o => o.id === a);
+    for(const o of chosen){
+      if(!o.pts) continue;
+      for(const k in o.pts){ const v = o.pts[k] * q.weight; scores[k] += v; contrib.push({q, o, k, v}); }
+    }
+  }
+  let best = ORDER[0];
+  for(const k of ORDER) if(scores[k] > scores[best]) best = k;
+  return {scores, best, contrib};
+}
+function profile(){
+  const r = compute();
+  const setupId = state.override || r.best;
+  const S = SETUPS[setupId];
+  const expO = optOf('exp'), dataO = optOf('data');
+  const level = expO ? expO.level : 'standard';
+  const focus = dataO ? dataO.focus : 'moves';
+  const freq = state.answers.freq || 'big';
+  const picked = Object.keys(COINS).filter(c => (state.answers.coins || []).includes(c));
+  const coins = picked.length ? picked : S.defaultCoins.slice();
+  const worry = state.answers.worry || 'spam';
+  const code = [setupId, LEVELS[level].code, FREQ[freq].code].concat(coins.map(c => c.toLowerCase())).join('-');
+  return {r, setupId, S, level, focus, freq, coins, coinsFromQuiz: picked.length > 0, worry, code};
+}
+function ptsLabel(q, o){
+  const parts = [];
+  if(o.pts) for(const k of ORDER) if(o.pts[k]) parts.push(`${SETUPS[k].short} +${fmtNum(o.pts[k] * q.weight)}`);
+  if(o.level) parts.push(`explanations: ${o.level}`);
+  if(o.focus) parts.push(`feature: ${o.focus}`);
+  if(q.id === 'freq') parts.push(`delivery: ${o.id}`);
+  if(q.id === 'worry') parts.push(`reassurance: ${o.id}`);
+  if(q.id === 'coins' && !o.pts) parts.push('adds to watchlist');
+  if(q.id === 'coins' && o.pts) parts.push('default coins');
+  return parts.join(' · ') || 'no points';
+}
+function scoreBars(scores, best, cls){
+  return `<div class="sbars ${cls || ''}">${ORDER.map(k =>
+    `<div class="sbar ${k === best ? 'win' : ''}"><span class="sbar-k">${SETUPS[k].name}</span><span class="sbar-track"><span class="sbar-fill" style="--w:${(scores[k] / MAX_SCORE * 100).toFixed(1)}%"></span></span><span class="sbar-v n-only">${fmtNum(scores[k])}</span></div>`
+  ).join('')}</div>`;
+}
+
+/* ---------- sample messages ---------- */
+function alertMsg(setupId, coins, level, freq, o){
+  o = o || {};
+  const c = coins[0], C = COINS[c];
+  const nm = level === 'compact' ? c : C.name;
+  if(setupId === 'mb'){
+    const weekly = freq === 'weekly';
+    const title = weekly ? 'Your weekly recap' : 'Your daily summary';
+    const lines = coins.slice(0, 3).map(k => `${level === 'compact' ? k : COINS[k].name} ${fmtPrice(COINS[k].price)} ${pct(COINS[k].ch)}`).join('<br>');
+    const span = weekly ? 'week' : 'day';
+    const extra = {
+      plain:`<p>A calm ${span}: most big coins moved less than 2%. Nothing unusual.</p><p><b>Term of the ${span}:</b> volatility means how much a price swings. Daily moves of 2–5% are normal in crypto.</p>`,
+      standard:`<p>A calm ${span}: most big coins moved less than 2%.</p>`,
+      compact:''
+    }[level];
+    return {tag:'Market Basics · ' + (weekly ? 'weekly recap' : 'daily summary'), time:o.time || (weekly ? 'Sun 10:00' : '19:00'), html:`<b>${title}</b><br>${lines}${extra}`};
+  }
+  if(setupId === 'wp'){
+    const thr = o.thr || 5, m = thr + 1.3;
+    const html = {
+      plain:`<b>${C.name} is up ${m.toFixed(1)}% in 24 hours</b><br>Now ${fmtPrice(C.price)}. That's more than the ${thr}% move you asked to hear about.<p>The market overall is up 1.1%, so this move is mostly about ${C.name} itself.</p>`,
+      standard:`<b>${c} ${fmtPct(m)} in 24h</b><br>Now ${fmtPrice(C.price)}. Market overall +1.1%, so the move is mostly ${c}-specific.`,
+      compact:`<b>${c} ${fmtPct(m)} · 24h</b><br>${fmtPrice(C.price)} · trigger ±${thr}%`
+    }[level];
+    return {tag:'Watchlist Pulse · big move', time:'13:05', html};
+  }
+  const dir = o.dir || 'above';
+  const lvl = o.lvl || nice(C.price * (dir === 'above' ? 1.05 : 0.95));
+  const now = lvl * (dir === 'above' ? 1.0015 : 0.9985);
+  const html = {
+    plain:`<b>${C.name} just went ${dir} ${fmtPrice(lvl)}</b><br>That's the level you set. It's now ${fmtPrice(now)}.<p>Want to set the next level? Send /levels.</p>`,
+    standard:`<b>${c} crossed ${dir} ${fmtPrice(lvl)}</b><br>Now ${fmtPrice(now)} · ${pct(dir === 'above' ? 2.3 : -2.3)} in 24h`,
+    compact:`<b>${c} ${dir === 'above' ? '▲' : '▼'} ${fmtPrice(lvl)}</b><br>${fmtPrice(now)} · ${pct(dir === 'above' ? 2.3 : -2.3)} 24h`
+  }[level];
+  return {tag:'Price Level Alerts · level hit', time:'14:32', html};
+}
+const bubble = m => `<div class="msg bot"><span class="msg-tag">${m.tag}</span>${m.html}<span class="msg-meta">Sample data · source: aggregated spot price · ${m.time}</span></div>`;
+
+/* ---------- views ---------- */
+function viewLanding(){
+  const row = items => { const s = items.map(([k, v]) => `<span class="tk"><b>${k}</b>${pct(v)}</span>`).join(''); return `<div class="noise-row"><div class="noise-track">${s}${s}</div></div>`; };
+  return `
+  <div class="landing">
+    <div class="hero-copy">
+      <p class="eyebrow">Crypto market alerts in Telegram</p>
+      <h1 class="display" id="screen-title" tabindex="-1">Follow crypto without <em>watching charts</em> all day</h1>
+      <p class="lede">Answer 7 quick questions and get a monitoring setup that fits you: which coins to watch, which signals matter, and how often to hear from us.</p>
+      <div class="cta-row">
+        <button type="button" class="btn-signal btn-lg" data-act="start">Find my setup ${ICON.arrow}</button>
+        <span class="cta-meta">${ICON.clock} About 1 minute</span>
+      </div>
+      <ul class="assure">
+        <li>${ICON.check}No exchange login or API keys</li>
+        <li>${ICON.check}No deposits or payments</li>
+        <li>${ICON.check}No email needed to see your result</li>
+      </ul>
+    </div>
+    <div class="hero-visual">
+      <div class="noise" aria-hidden="true">
+        <p class="vis-label">The market feed · 24h change · sample</p>
+        ${row(NOISE.slice(0, 10))}${row(NOISE.slice(10))}
+      </div>
+      <p class="vis-label vis-label--signal">What reaches your Telegram instead</p>
+      <div class="chat" role="img" aria-label="Three example CryptoPulse messages in Telegram">
+        ${chatHead('bot · example messages')}
+        <div class="chat-log">
+          ${bubble({tag:'Market Basics · daily summary', time:'09:00', html:`Bitcoin $104,820 ${pct(1.2)}, Ethereum $3,912 ${pct(-0.8)}. A calm day: most big coins moved less than 2%.`})}
+          ${bubble({tag:'Watchlist Pulse · big move', time:'13:05', html:`<b>SOL +6.3% in 24h</b>, now $182.40. The market overall is up 1.1%, so this move is mostly about Solana.`})}
+          ${bubble({tag:'Price Level Alerts · level hit', time:'14:32', html:`<b>BTC crossed above $105,000</b><br>Now $105,140`})}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function viewQuestion(){
+  const q = QUESTIONS[state.q];
+  const multi = q.type === 'multi';
+  const sel = state.answers[q.id];
+  const prog = QUESTIONS.map((_, i) => `<span class="${i < state.q ? 'done' : i === state.q ? 'now' : ''}"></span>`).join('');
+  const opts = q.options.map((o, i) => {
+    const on = multi ? (sel || []).includes(o.id) : sel === o.id;
+    return `<button type="button" class="opt ${o.exclusive ? 'opt--wide' : ''}" data-act="opt" data-o="${o.id}" aria-pressed="${on}">
+      <span class="key" aria-hidden="true">${KEYS[i]}</span>
+      <span class="opt-l">${o.label}${o.sub ? `<small>${o.sub}</small>` : ''}</span>
+      <span class="pts">${ptsLabel(q, o)}</span>
+    </button>`;
+  }).join('');
+  const count = (sel || []).length;
+  return `
+  <div class="qcard">
+    <div class="qtop">
+      <button type="button" class="link-btn" data-act="back">← ${state.q === 0 ? 'Home' : 'Back'}</button>
+      <span class="qcount">Question ${state.q + 1} of ${QUESTIONS.length}</span>
+    </div>
+    <div class="progress" aria-hidden="true">${prog}</div>
+    <h2 class="qtitle" id="screen-title" tabindex="-1">${q.title}</h2>
+    ${q.hint ? `<p class="qhint">${q.hint}</p>` : ''}
+    <div class="opts ${multi ? 'opts--coins' : ''}" role="group" aria-labelledby="screen-title">${opts}</div>
+    ${multi ? `<div class="qfoot"><button type="button" class="btn-signal" data-act="continue" ${count ? '' : 'disabled'}>Continue ${ICON.arrow}</button><span class="qhint">Or press Enter</span></div>` : ''}
+  </div>`;
+}
+
+function viewBuilding(){
+  const r = compute();
+  return `
+  <div class="qcard">
+    <p class="eyebrow">Almost there</p>
+    <h2 class="qtitle" id="screen-title" tabindex="-1">Matching your answers to 3 setups</h2>
+    ${scoreBars(r.scores, r.best)}
+    <p class="qhint" style="margin-top:0">Each answer adds points to one or more setups. Your goal counts the most.</p>
+  </div>`;
+}
+
+function reasonsFor(p){
+  if(state.override){
+    return `<li><span class="r-k">Your choice</span><span>You switched from ${SETUPS[p.r.best].name}, your quiz match. Coins, delivery and explanations stay tuned to your answers.</span></li>`;
+  }
+  const byQ = {};
+  p.r.contrib.filter(c => c.k === p.setupId).forEach(c => {
+    const e = byQ[c.q.id] || (byQ[c.q.id] = {q:c.q, labels:[], v:0});
+    e.labels.push(c.o.label); e.v += c.v;
+  });
+  return Object.values(byQ).sort((a, b) => b.v - a.v).slice(0, 3).map(t =>
+    `<li><span class="r-k">${t.q.reason}</span><q>${t.labels.join(', ')}</q><span class="pts">+${fmtNum(t.v)} ${p.S.short} · Q${t.q.n} ×${t.q.weight}</span></li>`
+  ).join('');
+}
+
+function viewResult(){
+  const p = profile(), S = p.S;
+  const others = ORDER.filter(k => k !== p.setupId);
+  const coinChips = `<span class="coinchips">${p.coins.map(c => `<span>${c}</span>`).join('')}</span>`;
+  const row = (k, v, src) => `<dt>${k}</dt><dd>${v}<span class="src n-only">← ${src}</span></dd>`;
+  const prev = alertMsg(p.setupId, p.coins, p.level, p.freq);
+  return `
+  <div class="result">
+    <div class="rhead">
+      <p class="eyebrow">${state.override ? 'The setup you picked' : 'Your setup'}</p>
+      <h2 class="rtitle" id="screen-title" tabindex="-1">${S.name}</h2>
+      <p class="lede">${S.tagline}</p>
+    </div>
+    <div class="rgrid">
+      <div class="rmain">
+        <section class="panel" aria-label="What you'll get">
+          <h3 class="ph">What you'll get</h3>
+          <dl class="spec">
+            ${row('Coins', coinChips, p.coinsFromQuiz ? 'Q6' : 'setup default')}
+            ${row('Trigger', S.trigger, 'setup')}
+            ${row('Delivery', FREQ[p.freq].label, 'Q4')}
+            ${row('Explanations', LEVELS[p.level].label, 'Q2')}
+            ${row('Main feature', FOCUS[p.focus], 'Q3')}
+          </dl>
+          ${S.roadmap ? `<p class="fine">${S.roadmap}</p>` : ''}
+        </section>
+        <section class="panel" aria-label="Why this setup">
+          <h3 class="ph">Why this setup</h3>
+          <ul class="reasons">${reasonsFor(p)}</ul>
+        </section>
+      </div>
+      <aside class="rside">
+        <p class="vis-label">Preview of a message · sample data</p>
+        <div class="chat">${chatHead('bot')}<div class="chat-log">${bubble(prev)}</div></div>
+      </aside>
+    </div>
+    <section class="reassure">${ICON.shield}<div><b>${WORRY[p.worry].title}</b>${WORRY[p.worry].text}<span class="src n-only">← Q7</span></div></section>
+    <section class="cta-panel">
+      <div>
+        <h3>Switch it on in Telegram</h3>
+        <ol class="next">
+          <li>Open the CryptoPulse bot. Your setup loads automatically.</li>
+          <li>Confirm which coins to watch.</li>
+          <li>${S.step3}</li>
+          <li>The bot switches monitoring on, and alerts arrive as things happen.</li>
+        </ol>
+      </div>
+      <div class="cta-act">
+        <button type="button" class="btn-signal btn-lg" data-act="cta">Open my setup in Telegram ${ICON.arrow}</button>
+        <p class="cta-fine">No exchange login or API keys. The link carries only a setup code, <code>${p.code}</code>, with no name, email or wallet.</p>
+      </div>
+    </section>
+    <div class="alt">
+      <span>Not quite you?</span>
+      ${others.map(k => `<button type="button" class="chip-btn" data-act="switch" data-s="${k}">See ${SETUPS[k].name}</button>`).join('')}
+      ${state.override ? `<button type="button" class="chip-btn" data-act="switch" data-s="">Back to my match</button>` : ''}
+      <button type="button" class="link-btn" data-act="retake">Retake the quiz</button>
+    </div>
+  </div>`;
+}
+
+const STAGES = [['Quiz done', ''], ['Telegram opened', 'intermediate conversion'], ['Monitoring on', 'activation'], ['First alert', 'value']];
+const stagesHTML = reached => `<ol class="stages" aria-label="Funnel progress">${STAGES.map((s, i) => `<li class="${i < reached ? 'done' : ''}"><b>${s[0]}</b>${s[1] ? `<span>${s[1]}</span>` : '<span>&nbsp;</span>'}</li>`).join('')}</ol>`;
+
+function viewBot(){
+  return `
+  <div class="botwrap">
+    <div class="bot-top">
+      <button type="button" class="link-btn" data-act="to-result">← Back to result</button>
+      <span class="eyebrow">Prototype of the Telegram bot</span>
+    </div>
+    <h2 class="bot-title" id="screen-title" tabindex="-1">Finish the setup in Telegram</h2>
+    <p class="fine" style="margin-top:-10px">A simulation of the bot conversation. Tap the buttons the way a user would.</p>
+    <div id="stages">${stagesHTML(bot ? bot.reached : 2)}</div>
+    <div class="chat chat--app">
+      ${chatHead('bot')}
+      <div class="chat-log" id="chatlog" aria-live="polite"></div>
+    </div>
+    <div class="bot-after" id="botafter" hidden>
+      <button type="button" class="btn-signal" data-act="restart-bot">Restart the demo</button>
+      <button type="button" class="chip-btn" data-act="to-result">Back to my result</button>
+    </div>
+  </div>`;
+}
+
+/* ---------- notes ---------- */
+function renderNotes(){
+  notesEl.hidden = !state.notes;
+  if(!state.notes) return;
+  let html = '';
+  if(state.screen === 'landing'){
+    html += `<div class="note"><h4>Reviewer note · first screen</h4>
+      <p><b>Quiz-first.</b> The CTA starts the quiz right here, with no long landing page before it.</p>
+      <p><span class="hyp">Hypothesis</span>A concrete result (“your setup”) gets more starts than a generic “sign up”. To be tested against a classic landing.</p>
+      <p>The headline covers both MVP segments: understanding the market, and not having to watch it.</p>
+      <p>The trust line rules out exchange logins, API keys and deposits before anyone has to ask.</p></div>`;
+  } else if(state.screen === 'quiz'){
+    const q = QUESTIONS[state.q], r = compute();
+    html += `<div class="note"><h4>Question ${q.n}${q.added ? ' · added to the original 5' : ''}</h4>
+      <dl class="ndl"><dt>Learns</dt><dd>${q.learn}</dd><dt>Used for</dt><dd>${q.use}</dd><dt>Weight</dt><dd>×${q.weight}</dd></dl>
+      <p class="muted">Points on each answer are already multiplied by the weight.</p></div>
+      <div class="note"><h4>Running totals</h4>${scoreBars(r.scores, r.best, 'static')}</div>`;
+  } else if(state.screen === 'building'){
+    const r = compute();
+    html += `<div class="note"><h4>Final totals</h4>${scoreBars(r.scores, r.best, 'static')}<p>These are the real scores. The short pause shows the user that their answers are being used.</p></div>`;
+  } else if(state.screen === 'result'){
+    const p = profile();
+    html += `<div class="note"><h4>Scores</h4>${scoreBars(p.r.scores, p.r.best, 'static')}<p>Highest weighted total wins. Ties go to the simpler setup.${state.override ? ` The user switched away from ${SETUPS[p.r.best].name}, which is logged as <code>result_setup_switched</code>.` : ''}</p></div>
+      <div class="note"><h4>Where each block comes from</h4><ul class="nlist">
+        <li>Setup: weighted total of Q1–Q6</li><li>Coins: Q6</li><li>Delivery: Q4</li><li>Explanations and preview tone: Q2</li><li>Main feature: Q3</li><li>Reassurance: Q7</li></ul></div>
+      <div class="note"><h4>Deep link</h4><code>t.me/CryptoPulseBot?start=${p.code}</code><p>${p.code.length} of 64 characters. Setup only, no personal data. The bot username is a placeholder.</p></div>`;
+  } else if(state.screen === 'bot'){
+    html += `<div class="note"><h4>Why the bot is part of the funnel</h4>
+      <p>Opening Telegram is an <b>intermediate conversion</b>. Activation is <code>monitoring_active</code>, and the user feels the value at the first relevant alert.</p>
+      <p>Q6 prefilled the coins and the start parameter carried the setup, so the whole setup takes about three taps.</p></div>`;
+  }
+  html += `<div class="note"><h4>Analytics events</h4><ol class="evlog" id="evlog"></ol></div>`;
+  notesEl.innerHTML = html;
+  renderEventLog();
+}
+function renderEventLog(){
+  const el = document.getElementById('evlog');
+  if(!el) return;
+  const fmtT = ms => { const s = Math.floor(ms / 1000); return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); };
+  const props = p => Object.keys(p).map(k => `${k}=${p[k]}`).join(' ');
+  el.innerHTML = events.slice(-8).reverse().map(e =>
+    `<li><span class="ev-t">${fmtT(e.t)}</span><code>${e.name}</code>${Object.keys(e.props).length ? `<span class="ev-p">${props(e.props)}</span>` : ''}</li>`
+  ).join('') || '<li class="muted">No events yet</li>';
+}
+
+/* ---------- render & flow ---------- */
+function render(){
+  const v = {landing:viewLanding, quiz:viewQuestion, building:viewBuilding, result:viewResult, bot:viewBot}[state.screen];
+  stage.innerHTML = v();
+  renderNotes();
+  if(!firstRender){
+    const h = document.getElementById('screen-title');
+    if(h) h.focus({preventScroll:true});
+    if(stage.getBoundingClientRect().top < 60) stage.scrollIntoView({block:'start', behavior: reduceMotion ? 'auto' : 'smooth'});
+  }
+  firstRender = false;
+}
+function startQuiz(){ state.screen = 'quiz'; state.q = 0; render(); track('quiz_start'); }
+function next(){
+  if(state.q < QUESTIONS.length - 1){ state.q++; render(); }
+  else finishQuiz();
+}
+function prev(){
+  if(state.q === 0) state.screen = 'landing'; else state.q--;
+  render();
+}
+function finishQuiz(){
+  state.override = null;
+  const r = compute();
+  state.screen = 'building'; render();
+  track('quiz_complete', {setup: r.best});
+  setTimeout(() => { const b = stage.querySelector('.sbars'); if(b) b.classList.add('go'); }, 40);
+  clearTimeout(buildTimer);
+  buildTimer = setTimeout(() => {
+    if(state.screen !== 'building') return;
+    state.screen = 'result'; render();
+    track('result_view', {setup: r.best});
+  }, reduceMotion ? 700 : 1800);
+}
+function choose(oid){
+  const q = QUESTIONS[state.q];
+  if(q.type === 'multi'){
+    const o = q.options.find(x => x.id === oid);
+    let sel = new Set(state.answers[q.id] || []);
+    if(sel.has(oid)) sel.delete(oid);
+    else { if(o.exclusive) sel = new Set(); else q.options.filter(x => x.exclusive).forEach(x => sel.delete(x.id)); sel.add(oid); }
+    state.answers[q.id] = Array.from(sel);
+    stage.querySelectorAll('.opt').forEach(b => b.setAttribute('aria-pressed', String(sel.has(b.dataset.o))));
+    const c = stage.querySelector('[data-act="continue"]'); if(c) c.disabled = sel.size === 0;
+    renderNotes();
+    return;
+  }
+  if(lock) return;
+  lock = true;
+  state.answers[q.id] = oid;
+  stage.querySelectorAll('.opt').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.o === oid)));
+  track('question_answered', {q: q.n, answer: oid});
+  setTimeout(() => { lock = false; next(); }, reduceMotion ? 80 : 260);
+}
+function continueMulti(){
+  const q = QUESTIONS[state.q];
+  const sel = state.answers[q.id] || [];
+  if(!sel.length) return;
+  track('question_answered', {q: q.n, answer: sel.join('+')});
+  next();
+}
+
+/* ---------- bot simulation ---------- */
+function chatLog(){ return document.getElementById('chatlog'); }
+function addMsg(html, cls){
+  const log = chatLog(); if(!log) return null;
+  const d = document.createElement('div');
+  d.className = 'msg ' + cls; d.innerHTML = html;
+  log.appendChild(d); log.scrollTop = log.scrollHeight;
+  return d;
+}
+function setStages(n){ bot.reached = n; const s = document.getElementById('stages'); if(s) s.innerHTML = stagesHTML(n); }
+async function say(html, kb){
+  const tok = bot && bot.tok;
+  const t = addMsg('<span class="dots" aria-label="typing"><i></i><i></i><i></i></span>', 'bot');
+  await wait(reduceMotion ? 60 : 650);
+  if(!bot || bot.tok !== tok || !t || !t.isConnected) return false;
+  t.innerHTML = html;
+  if(kb){
+    const k = document.createElement('div');
+    k.className = 'kb';
+    k.innerHTML = kb.map(b => `<button type="button" data-bot="${b.act}" class="${b.wide ? 'wide' : ''}"${b.on !== undefined ? ` aria-pressed="${b.on}"` : ''}>${b.label}</button>`).join('');
+    chatLog().appendChild(k);
+  }
+  chatLog().scrollTop = chatLog().scrollHeight;
+  return true;
+}
+function openBot(){
+  const p = profile();
+  track('cta_telegram_click', {setup_code: p.code});
+  bot = {p, setupId: p.setupId, coins: new Set(p.coins), trig: null, levels: null, reached: 2, tok: Symbol('bot')};
+  state.screen = 'bot'; render();
+  runBotStart();
+}
+async function runBotStart(){
+  const p = bot.p, S = SETUPS[bot.setupId];
+  addMsg(`You opened t.me/CryptoPulseBot?start=${p.code}`, 'sys');
+  addMsg('/start', 'user');
+  track('bot_start', {start_param: p.code});
+  await say(`Hi! You've just taken the CryptoPulse quiz. Your suggested setup is <b>${S.name}</b>: ${S.tagline.charAt(0).toLowerCase() + S.tagline.slice(1)}<p>Let's switch it on. It takes about 30 seconds.</p>`,
+    [{label:'Set it up', act:'go'}, {label:'See other setups', act:'others'}]);
+}
+async function stepCoins(){
+  if(!bot) return;
+  const fromQuiz = bot.p.coinsFromQuiz;
+  await say(`Which coins should I watch? ${fromQuiz ? "I've ticked the ones you picked in the quiz." : "I've ticked a starting set. Change it if you like."}`,
+    Object.keys(COINS).map(c => ({label: (bot.coins.has(c) ? '✓ ' : '') + c, act: 'coin:' + c, on: bot.coins.has(c)}))
+      .concat([{label:'Done', act:'coins-done', wide:true}]));
+}
+async function stepTrigger(){
+  if(!bot) return;
+  const c =Array.from(bot.coins)[0], C = COINS[c];
+  if(bot.setupId === 'mb'){
+    const wk = bot.p.freq === 'weekly';
+    await say(wk ? 'When should your weekly recap arrive?' : 'When should your daily summary arrive?',
+      wk ? [{label:'Sunday, 10:00', act:'trig:sun-am'}, {label:'Sunday, 19:00', act:'trig:sun-pm'}]
+         : [{label:'Morning, 09:00', act:'trig:am'}, {label:'Evening, 19:00', act:'trig:pm'}]);
+  } else if(bot.setupId === 'wp'){
+    await say('Alert me when one of your coins moves more than…',
+      [{label:'±3%', act:'trig:3'}, {label:'±5% · suggested', act:'trig:5'}, {label:'±10%', act:'trig:10'}]);
+  } else {
+    bot.levels = {coin: c, up: nice(C.price * 1.05), dn: nice(C.price * 0.95)};
+    await say(`Set your first price level for ${C.name}. It's at ${fmtPrice(C.price)} right now <span class="muted">(sample)</span>.`,
+      [{label:`Above ${fmtPrice(bot.levels.up)}`, act:'trig:up', wide:true}, {label:`Below ${fmtPrice(bot.levels.dn)}`, act:'trig:down', wide:true}, {label:'Both', act:'trig:both', wide:true}]);
+  }
+}
+function trigText(){
+  const v = bot.trig;
+  if(bot.setupId === 'mb') return ({am:'Daily summary at 09:00', pm:'Daily summary at 19:00', 'sun-am':'Weekly recap on Sunday at 10:00', 'sun-pm':'Weekly recap on Sunday at 19:00'})[v] + ', plus a heads-up on moves over ±10%';
+  if(bot.setupId === 'wp') return `Alert on moves over ±${v}% in 24h`;
+  const L = bot.levels;
+  return v === 'up' ? `${L.coin} above ${fmtPrice(L.up)}` : v === 'down' ? `${L.coin} below ${fmtPrice(L.dn)}` : `${L.coin} above ${fmtPrice(L.up)} or below ${fmtPrice(L.dn)}`;
+}
+async function stepConfirm(){
+  if(!bot) return;
+  const S =SETUPS[bot.setupId];
+  const items = [`Coins: ${Array.from(bot.coins).join(', ')}`, trigText()];
+  if(bot.setupId !== 'mb') items.push(FREQ[bot.p.freq].bot);
+  items.push(`Explanations: ${LEVELS[bot.p.level].label.charAt(0).toLowerCase() + LEVELS[bot.p.level].label.slice(1)}`);
+  items.push('Quiet hours: 23:00–08:00');
+  await say(`Here's your setup, <b>${S.name}</b>:<ul>${items.map(i => `<li>${i}</li>`).join('')}</ul>`,
+    [{label:'Turn on monitoring', act:'activate', wide:true}, {label:'Change something', act:'change', wide:true}]);
+}
+async function activate(){
+  if(!bot) return;
+  track('monitoring_active', {setup: bot.setupId});
+  setStages(3);
+  const ok = await say(`<b>Done. Monitoring is on.</b><br>I'll message you when something on your list happens. Change anything with /settings, pause with /pause.<p class="muted">Market data only. Not financial advice.</p>`);
+  if(!ok) return;
+  const tok = bot.tok;
+  await wait(reduceMotion ? 100 : 1300);
+  if(!bot || bot.tok !== tok) return;
+  const coins = Array.from(bot.coins);
+  let o = {};
+  if(bot.setupId === 'wp') o = {thr: Number(bot.trig)};
+  if(bot.setupId === 'ta') o = bot.trig === 'down' ? {dir:'below', lvl: bot.levels.dn} : {dir:'above', lvl: bot.levels.up};
+  if(bot.setupId === 'mb') o = {time: ({am:'09:00', pm:'19:00', 'sun-am':'Sun 10:00', 'sun-pm':'Sun 19:00'})[bot.trig]};
+  const m = alertMsg(bot.setupId, coins, bot.p.level, bot.p.freq, o);
+  const shown = await say(`<span class="msg-tag">First alert · sample</span>${m.html}<span class="msg-meta">Source: aggregated spot price · ${m.time}</span>`);
+  if(!shown) return;
+  track('first_alert_delivered', {setup: bot.setupId});
+  setStages(4);
+  addMsg('Demo ends here. In the real bot, alerts follow live market data.', 'sys');
+  const a = document.getElementById('botafter'); if(a) a.hidden = false;
+}
+async function botAct(btn){
+  if(!bot) return;
+  const [a, v] = btn.dataset.bot.split(':');
+  const kb = btn.closest('.kb');
+  if(a === 'coin'){
+    if(bot.coins.has(v)) bot.coins.delete(v); else bot.coins.add(v);
+    const on = bot.coins.has(v);
+    btn.setAttribute('aria-pressed', String(on));
+    btn.textContent = (on ? '✓ ' : '') + v;
+    return;
+  }
+  if(a === 'coins-done'){
+    if(!bot.coins.size){ btn.textContent = 'Pick at least one coin'; return; }
+    kb.remove();
+    addMsg(Array.from(bot.coins).join(', '), 'user');
+    track('coins_selected', {count: bot.coins.size});
+    await stepTrigger();
+    return;
+  }
+  const label = btn.textContent;
+  kb.remove();
+  addMsg(label, 'user');
+  if(a === 'go' || a === 'change'){ await stepCoins(); }
+  else if(a === 'others'){
+    await say('Here are all three. Pick one:', ORDER.map(k => ({label: SETUPS[k].name + (k === bot.p.setupId ? ' · suggested' : ''), act: 'pick:' + k, wide: true})));
+  } else if(a === 'pick'){
+    bot.setupId = v;
+    await say(`<b>${SETUPS[v].name}</b>: ${SETUPS[v].tagline.charAt(0).toLowerCase() + SETUPS[v].tagline.slice(1)}`);
+    await stepCoins();
+  } else if(a === 'trig'){
+    bot.trig = v;
+    track('trigger_set', {type: bot.setupId + ':' + v});
+    await stepConfirm();
+  } else if(a === 'activate'){
+    await activate();
+  }
+}
+
+/* ---------- events ---------- */
+stage.addEventListener('click', e => {
+  const bb = e.target.closest('[data-bot]');
+  if(bb){ botAct(bb); return; }
+  const el = e.target.closest('[data-act]');
+  if(!el) return;
+  const act = el.dataset.act;
+  if(act === 'start') startQuiz();
+  else if(act === 'opt') choose(el.dataset.o);
+  else if(act === 'continue') continueMulti();
+  else if(act === 'back') prev();
+  else if(act === 'cta') openBot();
+  else if(act === 'switch'){
+    const from = state.override || compute().best;
+    state.override = el.dataset.s || null;
+    render();
+    track('result_setup_switched', {from, to: state.override || compute().best});
+  }
+  else if(act === 'retake'){ state.answers = {}; state.override = null; state.q = 0; state.screen = 'quiz'; render(); track('quiz_start', {retake: true}); }
+  else if(act === 'to-result'){ bot = null; state.screen = 'result'; render(); }
+  else if(act === 'restart-bot'){ openBot(); }
+});
+document.addEventListener('keydown', e => {
+  if(state.screen !== 'quiz' || e.metaKey || e.ctrlKey || e.altKey) return;
+  if(document.getElementById('view-prototype').hidden) return;
+  const tag = (e.target.tagName || '').toLowerCase();
+  if(tag === 'input' || tag === 'textarea') return;
+  const q = QUESTIONS[state.q];
+  if(e.key === 'Enter' && q.type === 'multi' && !(e.target.closest && e.target.closest('.opt'))){ e.preventDefault(); continueMulti(); return; }
+  let i = -1;
+  if(/^[1-7]$/.test(e.key)) i = Number(e.key) - 1;
+  else { const k = e.key.toUpperCase(); if(k.length === 1) i = KEYS.indexOf(k); }
+  if(i >= 0 && i < q.options.length){ e.preventDefault(); choose(q.options[i].id); }
+});
+
+/* notes toggle */
+const notesSwitch = document.getElementById('notes-switch');
+function applyNotes(){
+  document.body.classList.toggle('notes-on', state.notes);
+  notesSwitch.checked = state.notes;
+  renderNotes();
+}
+notesSwitch.addEventListener('change', () => { state.notes = notesSwitch.checked; store.set('cp-notes', state.notes ? '1' : '0'); applyNotes(); });
+
+/* views */
+function setView(v, writeHash){
+  const isS = v === 'strategy';
+  document.getElementById('view-prototype').hidden = isS;
+  document.getElementById('view-strategy').hidden = !isS;
+  document.getElementById('tab-prototype').setAttribute('aria-selected', String(!isS));
+  document.getElementById('tab-strategy').setAttribute('aria-selected', String(isS));
+  document.getElementById('notes-label').hidden = isS;
+  if(writeHash){ try{ history.replaceState(null, '', '#' + v); }catch(e){} }
+  window.scrollTo(0, 0);
+}
+document.querySelectorAll('[data-view]').forEach(b => b.addEventListener('click', () => setView(b.dataset.view, true)));
+document.querySelectorAll('[data-view-go]').forEach(b => b.addEventListener('click', () => setView(b.dataset.viewGo, true)));
+document.querySelectorAll('[data-goto]').forEach(b => b.addEventListener('click', () => {
+  const t = document.getElementById(b.dataset.goto);
+  if(t) t.scrollIntoView({behavior: reduceMotion ? 'auto' : 'smooth', block:'start'});
+}));
+window.addEventListener('hashchange', () => { const h = location.hash.slice(1); if(h === 'strategy' || h === 'prototype') setView(h, false); });
+
+/* strategy tables, built from the same data the quiz uses */
+function buildTables(){
+  document.getElementById('qtable').innerHTML =
+    `<thead><tr><th>#</th><th>What we learn</th><th>Question</th><th>How the answer is used</th><th>Weight</th></tr></thead><tbody>` +
+    QUESTIONS.map(q => `<tr><td class="num">${q.n}${q.added ? '<span class="added">added</span>' : ''}</td><td><b>${q.learn}</b></td><td>${q.title}</td><td>${q.use}</td><td class="num">×${q.weight}</td></tr>`).join('') +
+    `</tbody>`;
+  const also = (q, o) => o.level ? `explanations: ${o.level}` : o.focus ? `feature: ${o.focus}` : q.id === 'freq' ? `delivery: ${o.id}` : q.id === 'worry' ? 'reassurance message' : q.id === 'coins' ? (o.pts ? 'default coins' : 'watchlist') : '';
+  document.getElementById('otable').innerHTML =
+    `<thead><tr><th>Q</th><th>Answer</th><th>Basics</th><th>Pulse</th><th>Levels</th><th>Also sets</th></tr></thead><tbody>` +
+    QUESTIONS.map(q => q.options.map(o => `<tr><td class="num">${q.n}</td><td>${o.label}</td>${ORDER.map(k => `<td class="num">${o.pts && o.pts[k] ? '+' + fmtNum(o.pts[k] * q.weight) : '·'}</td>`).join('')}<td>${also(q, o)}</td></tr>`).join('')).join('') +
+    `</tbody>`;
+}
+
+/* boot */
+buildTables();
+const h0 = location.hash.slice(1);
+setView(h0 === 'strategy' ? 'strategy' : 'prototype', false);
+document.body.classList.toggle('notes-on', state.notes);
+notesSwitch.checked = state.notes;
+render();
+track('landing_view');
+})();
+</script>

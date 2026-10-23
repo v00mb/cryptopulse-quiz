@@ -1,0 +1,22 @@
+{
+  "name": "bot",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "dev": "tsx watch --env-file=.env src/index.ts",
+    "build": "tsup",
+    "start": "node dist/index.js",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@cryptopulse/shared": "*",
+    "grammy": "^1.31.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.5"
+  }
+}
